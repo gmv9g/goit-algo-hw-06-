@@ -1,3 +1,4 @@
+import pickle
 from datetime import datetime, timedelta
 
 class Birthday:
@@ -75,8 +76,19 @@ def handle_upcoming_birthdays(address_book):
     else:
         print("No upcoming birthdays within the next 30 days")
 
+def save_data(book, filename="addressbook.pkl"):
+    with open(filename, "wb") as f:
+        pickle.dump(book, f)
+
+def load_data(filename="addressbook.pkl"):
+    try:
+        with open(filename, "rb") as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        return AddressBook()  # Повернення нової адресної книги, якщо файл не знайдено
+
 def main():
-    address_book = AddressBook()
+    address_book = load_data()
     
     while True:
         command = input("Enter command (add/find/upcoming/exit): ").strip().lower()
@@ -95,6 +107,7 @@ def main():
             handle_upcoming_birthdays(address_book)
         
         elif command == "exit":
+            save_data(address_book)  # Зберегти дані перед виходом
             print("Exiting...")
             break
         
